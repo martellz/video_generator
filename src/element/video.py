@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from typing import Optional, Tuple, overload, override
+from typing import Optional, Tuple
 from pathlib import Path
 from .base import BaseElement
 
