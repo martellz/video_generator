@@ -13,7 +13,7 @@ def main(config_path):
       Path(config_path).parent,  # work_dir (current directory)
       output_fn='output.mp4',
       fps=30,
-      resolution=(1920, 1080)
+      resolution=(1080, 1920)
   )
 
   video_generator.generate_video()

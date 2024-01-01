@@ -8,11 +8,17 @@ from .base import BaseElement
 class VideoElement(BaseElement):
   video: cv2.VideoCapture
 
-  def __init__(self, src: str, start_time: Optional[int], end_time: Optional[int], fps: Optional[int], position: Optional[Tuple[float, float]], size: Optional[Tuple[int, int]], **kwargs):
-    super().__init__(start_time, end_time, fps, position, size, **kwargs)
-    self.video = cv2.VideoCapture(str(src))
-    if start_time is not None:
-      self.video.set(cv2.CAP_PROP_POS_FRAMES, start_time)
+  def __init__(self, element_config, work_dir: Path, fps: float, resolution: Tuple[int, int]):
+    super().__init__(element_config, work_dir, fps, resolution)
+    src = self.work_dir / element_config['path']
+    self.video = cv2.VideoCapture(src.as_posix())
+    if 'video_start_time' in element_config:
+      self.video.set(cv2.CAP_PROP_POS_FRAMES, element_config['video_start_time'])
+
+    # set the end_time by the video length if not specified
+    end_time = int(self.video.get(cv2.CAP_PROP_FRAME_COUNT) / self.fps)
+    if self.end_time is None or self.end_time > end_time or self.end_time < 0:
+      self.end_time = end_time
 
   def render(self, frame: np.ndarray) -> np.ndarray:
     video_frame = self._deal_video_frame()
